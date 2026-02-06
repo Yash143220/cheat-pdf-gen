@@ -126,6 +126,11 @@ function resetUpload() {
 // NAVIGATION
 // ======================================
 function goToStep(step) {
+    // Scroll to top FIRST (before changing content)
+    window.scrollTo({ top: 0, behavior: 'instant' });
+    document.body.scrollTop = 0; // For Safari
+    document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    
     // Hide all steps
     document.querySelectorAll('.step-content').forEach(s => s.style.display = 'none');
     
@@ -143,7 +148,13 @@ function goToStep(step) {
     });
     
     currentStep = step;
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    // Scroll again after a tiny delay to ensure content is rendered
+    setTimeout(() => {
+        window.scrollTo({ top: 0, behavior: 'instant' });
+        document.body.scrollTop = 0;
+        document.documentElement.scrollTop = 0;
+    }, 10);
 }
 
 // ======================================
@@ -432,12 +443,16 @@ async function renderSide(page, grid, sourcePdf, cellWidth, cellHeight, marginPt
     
     // Add watermark if specified
     if (config.watermark) {
+        const fontSize = 10;
+        const textWidth = config.watermark.length * fontSize * 0.5; // Approximate text width
+        const x = (page.getWidth() - textWidth) / 2;
+        const y = 30; // Slightly higher to avoid printer margins
+        
         page.drawText(config.watermark, {
-            x: page.getWidth() / 2 - 50,
-            y: 20,
-            size: 10,
-            color: PDFLib.rgb(0.7, 0.7, 0.7),
-            opacity: 0.5
+            x: x,
+            y: y,
+            size: fontSize,
+            color: PDFLib.rgb(0.6, 0.6, 0.6) // Light gray for watermark effect
         });
     }
 }
