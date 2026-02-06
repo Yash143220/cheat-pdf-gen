@@ -179,19 +179,21 @@ function calculateImpositionLayout(totalPages, layout) {
     
     const { cols, rows } = gridMap[layout];
     const pagesPerSheet = cols * rows;
-    const pagesPerSide = Math.ceil(pagesPerSheet / 2); // Half for front, half for back
     
-    // Calculate total sheets needed
-    const totalSheets = Math.ceil(totalPages / pagesPerSheet);
+    // Each physical sheet has front AND back, so it holds 2 * pagesPerSheet pages total
+    const totalPagesPerPhysicalSheet = pagesPerSheet * 2;
+    
+    // Calculate total physical sheets needed
+    const totalSheets = Math.ceil(totalPages / totalPagesPerPhysicalSheet);
     
     const sheets = [];
     
     for (let sheetIndex = 0; sheetIndex < totalSheets; sheetIndex++) {
-        const basePageNum = sheetIndex * pagesPerSheet;
+        const basePageNum = sheetIndex * totalPagesPerPhysicalSheet;
         
         // FRONT SIDE: Odd pages (1, 3, 5, 7, ...)
         const frontPages = [];
-        for (let i = 0; i < pagesPerSide; i++) {
+        for (let i = 0; i < pagesPerSheet; i++) {
             const pageNum = basePageNum + (i * 2) + 1; // Odd pages: 1, 3, 5, ...
             frontPages.push(pageNum <= totalPages ? pageNum : null);
         }
@@ -210,13 +212,19 @@ function calculateImpositionLayout(totalPages, layout) {
             backPages.push(...rowPages.reverse());
         }
         
-        sheets.push({
-            front: arrangeInGrid(frontPages, cols, rows),
-            back: arrangeInGrid(backPages, cols, rows)
-        });
+        // Only add sheet if it has at least one page
+        const hasFrontContent = frontPages.some(p => p !== null);
+        const hasBackContent = backPages.some(p => p !== null);
+        
+        if (hasFrontContent || hasBackContent) {
+            sheets.push({
+                front: arrangeInGrid(frontPages, cols, rows),
+                back: arrangeInGrid(backPages, cols, rows)
+            });
+        }
     }
     
-    return { sheets, cols, rows, totalSheets };
+    return { sheets, cols, rows, totalSheets: sheets.length };
 }
 
 /**
@@ -258,15 +266,36 @@ async function generatePDF() {
         
         const { sheets, cols, rows, totalSheets } = calculateImpositionLayout(totalPages, selectedLayout);
         
-        // Step 3: Create new PDF
+        // Step 3: Detect source page orientation
+        const firstPage = sourcePdf.getPage(0);
+        const { width: srcWidth, height: srcHeight } = firstPage.getSize();
+        const isPortrait = srcHeight > srcWidth;
+        
+        // Determine output orientation
+        let outputIsPortrait = false;
+        if (config.orientation === 'portrait') {
+            outputIsPortrait = true;
+        } else if (config.orientation === 'landscape') {
+            outputIsPortrait = false;
+        } else { // auto
+            outputIsPortrait = isPortrait;
+        }
+        
+        // Step 4: Create new PDF
         progressText.textContent = 'Creating new PDF...';
         progressFill.style.width = '30%';
         
         const outputPdf = await PDFLib.PDFDocument.create();
         
-        // Page dimensions (A4 landscape for better N-in-1 layout)
-        const pageWidth = 842; // A4 landscape width in points
-        const pageHeight = 595; // A4 landscape height in points
+        // Page dimensions based on orientation
+        let pageWidth, pageHeight;
+        if (outputIsPortrait) {
+            pageWidth = 595;  // A4 portrait width in points
+            pageHeight = 842; // A4 portrait height in points
+        } else {
+            pageWidth = 842;  // A4 landscape width in points
+            pageHeight = 595; // A4 landscape height in points
+        }
         
         // Calculate cell dimensions
         const marginPt = config.margins * 2.83465; // mm to points
@@ -278,23 +307,33 @@ async function generatePDF() {
         const cellWidth = availableWidth / cols;
         const cellHeight = availableHeight / rows;
         
-        // Step 4: Process each sheet
-        for (let i = 0; i < totalSheets; i++) {
-            progressText.textContent = `Processing sheet ${i + 1}/${totalSheets}...`;
-            progressFill.style.width = `${30 + (i / totalSheets) * 60}%`;
+        // Step 5: Process each sheet
+        for (let i = 0; i < sheets.length; i++) {
+            progressText.textContent = `Processing sheet ${i + 1}/${sheets.length}...`;
+            progressFill.style.width = `${30 + (i / sheets.length) * 60}%`;
             
             const sheet = sheets[i];
             
-            // Create front page
-            const frontPage = outputPdf.addPage([pageWidth, pageHeight]);
-            await renderSide(frontPage, sheet.front, sourcePdf, cellWidth, cellHeight, marginPt, spacingPt, cols, rows);
+            // Check if front has content
+            const hasFrontContent = sheet.front.some(row => row.some(page => page !== null));
             
-            // Create back page
-            const backPage = outputPdf.addPage([pageWidth, pageHeight]);
-            await renderSide(backPage, sheet.back, sourcePdf, cellWidth, cellHeight, marginPt, spacingPt, cols, rows);
+            // Check if back has content
+            const hasBackContent = sheet.back.some(row => row.some(page => page !== null));
+            
+            // Create front page if it has content
+            if (hasFrontContent) {
+                const frontPage = outputPdf.addPage([pageWidth, pageHeight]);
+                await renderSide(frontPage, sheet.front, sourcePdf, cellWidth, cellHeight, marginPt, spacingPt, cols, rows);
+            }
+            
+            // Create back page only if it has content
+            if (hasBackContent) {
+                const backPage = outputPdf.addPage([pageWidth, pageHeight]);
+                await renderSide(backPage, sheet.back, sourcePdf, cellWidth, cellHeight, marginPt, spacingPt, cols, rows);
+            }
         }
         
-        // Step 5: Save PDF
+        // Step 6: Save PDF
         progressText.textContent = 'Finalizing PDF...';
         progressFill.style.width = '95%';
         
@@ -309,10 +348,14 @@ async function generatePDF() {
             document.getElementById('resultCard').style.display = 'block';
             document.getElementById('startOver').style.display = 'block';
             
+            // Calculate actual output sheets (physical sheets = output pages / 2 for duplex)
+            const outputPageCount = outputPdf.getPageCount();
+            const actualSheets = Math.ceil(outputPageCount / 2);
+            
             // Update stats
             document.getElementById('originalPages').textContent = totalPages;
-            document.getElementById('outputSheets').textContent = totalSheets;
-            const savedPercent = Math.round((1 - totalSheets / totalPages) * 100);
+            document.getElementById('outputSheets').textContent = actualSheets;
+            const savedPercent = Math.round((1 - actualSheets / totalPages) * 100);
             document.getElementById('paperSaved').textContent = `${savedPercent}%`;
             
             // Setup download

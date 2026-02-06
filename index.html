@@ -14,9 +14,6 @@
     <div class="hero">
         <div class="container">
             <div class="hero-badge">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                    <path d="M8 0L10.163 5.837L16 8L10.163 10.163L8 16L5.837 10.163L0 8L5.837 5.837L8 0Z" fill="currentColor"/>
-                </svg>
                 <span>100% Duplex-Safe Layout</span>
             </div>
             <h1 class="hero-title">Print Smart. Save Paper.<br/>Zero Page Mismatch.</h1>
@@ -75,7 +72,7 @@
             <!-- Step 1: Upload -->
             <div class="card step-content" id="step1" style="display: block;">
                 <div class="card-header">
-                    <h2>📄 Upload Your PDF</h2>
+                    <h2>Upload Your PDF</h2>
                     <p>Drop your notes, slides, or study material</p>
                 </div>
                 <div class="upload-zone" id="uploadZone">
@@ -89,7 +86,12 @@
                     <input type="file" id="pdfInput" accept=".pdf" hidden>
                 </div>
                 <div class="file-info" id="fileInfo" style="display: none;">
-                    <div class="file-icon">📄</div>
+                    <div class="file-icon">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                        <polyline points="14 2 14 8 20 8"></polyline>
+                    </svg>
+                </div>
                     <div class="file-details">
                         <div class="file-name" id="fileName"></div>
                         <div class="file-meta" id="fileMeta"></div>
@@ -102,7 +104,7 @@
             <!-- Step 2: Choose Layout -->
             <div class="card step-content" id="step2" style="display: none;">
                 <div class="card-header">
-                    <h2>📐 Choose Your Layout</h2>
+                    <h2>Choose Your Layout</h2>
                     <p>Select how many pages per sheet</p>
                 </div>
                 <div class="layout-grid">
@@ -148,7 +150,7 @@
             <!-- Step 3: Customize -->
             <div class="card step-content" id="step3" style="display: none;">
                 <div class="card-header">
-                    <h2>⚙️ Fine-tune Settings</h2>
+                    <h2>Fine-tune Settings</h2>
                     <p>Optional customizations</p>
                 </div>
                 
@@ -216,7 +218,7 @@
             <!-- Step 4: Generate -->
             <div class="card step-content" id="step4" style="display: none;">
                 <div class="card-header">
-                    <h2>🎉 Generating Your Print-Ready PDF</h2>
+                    <h2>Generating Your Print-Ready PDF</h2>
                     <p>This may take a few seconds...</p>
                 </div>
                 
@@ -228,7 +230,7 @@
                 </div>
 
                 <div class="result-card" id="resultCard" style="display: none;">
-                    <div class="result-icon">✅</div>
+                    <div class="result-icon">✓</div>
                     <h3>Your PDF is Ready!</h3>
                     <div class="result-stats">
                         <div class="stat">
@@ -253,7 +255,7 @@
                         Download Print-Ready PDF
                     </button>
                     <div class="printing-guide">
-                        <h4>📖 Printing Instructions:</h4>
+                        <h4>Printing Instructions:</h4>
                         <ol>
                             <li>Open the downloaded PDF</li>
                             <li>Select "Print" and choose your printer</li>
@@ -271,7 +273,7 @@
 
     <!-- Footer -->
     <footer>
-        <p>Made for Students, Notes, and Exam Prep 📚 | 100% Free & Open Source</p>
+        <p>Made for Students, Notes, and Exam Prep | 100% Free & Open Source</p>
     </footer>
 
     <!-- Scripts -->
