@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CheatSheet Printer - Print Smart, Save Paper</title>
+    <title>Micro Cheat Sheet Maker - Print Front & Back, Save Paper</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,17 +14,17 @@
     <div class="hero">
         <div class="container">
             <div class="hero-badge">
-                <span>100% Duplex-Safe Layout</span>
+                <span>Perfect Cheat Printing</span>
             </div>
             <h1 class="hero-title">Print Smart. Save Paper.<br/>Zero Page Mismatch.</h1>
-            <p class="hero-subtitle">Convert your PDFs to exam-ready cheat sheets with perfect duplex printing. No manual fixing. No wasted paper.</p>
+            <p class="hero-subtitle">Convert your PDFs to exam-ready micro cheat sheets with perfect front-and-back printing. No manual fixing. No wasted paper.</p>
             
             <div class="trust-badges">
                 <div class="badge">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="20 6 9 17 4 12"></polyline>
                     </svg>
-                    <span>No Manual Fixing Needed</span>
+                    <span>No Manual Page Arranging</span>
                 </div>
                 <div class="badge">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -72,8 +72,8 @@
             <!-- Step 1: Upload -->
             <div class="card step-content" id="step1" style="display: block;">
                 <div class="card-header">
-                    <h2>Upload Your PDF</h2>
-                    <p>Drop your notes, slides, or study material</p>
+                    <h2>Upload Your Study Material</h2>
+                    <p>Upload notes, slides, or PDFs to convert into micro cheat sheets</p>
                 </div>
                 <div class="upload-zone" id="uploadZone">
                     <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -81,56 +81,57 @@
                         <polyline points="17 8 12 3 7 8"></polyline>
                         <line x1="12" y1="3" x2="12" y2="15"></line>
                     </svg>
-                    <h3>Drop PDF here or click to browse</h3>
-                    <p>Supports any PDF up to 50MB</p>
+                    <h3>Drop your study PDFs here or click to browse</h3>
+                    <p>Lecture notes, slides, textbook pages - any PDF works!</p>
                     <input type="file" id="pdfInput" accept=".pdf" hidden>
                 </div>
-                <div class="file-info" id="fileInfo" style="display: none;">
-                    <div class="file-icon">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                        <polyline points="14 2 14 8 20 8"></polyline>
-                    </svg>
+                <div class="file-list" id="fileList" style="display: none;"></div>
+                
+                <div class="advanced-options" id="advancedOptions" style="display: none;">
+                    <button class="btn-secondary-small" id="addMoreFiles">+ Add More Files</button>
                 </div>
-                    <div class="file-details">
-                        <div class="file-name" id="fileName"></div>
-                        <div class="file-meta" id="fileMeta"></div>
-                    </div>
-                    <button class="btn-remove" id="removeFile">✕</button>
-                </div>
+                
                 <button class="btn-primary" id="nextToLayout" style="display: none;">Continue to Layout →</button>
             </div>
 
             <!-- Step 2: Choose Layout -->
             <div class="card step-content" id="step2" style="display: none;">
                 <div class="card-header">
-                    <h2>Choose Your Layout</h2>
-                    <p>Select how many pages per sheet</p>
+                    <h2>Choose Layout Size</h2>
+                    <p>How many pages per sheet? (More pages = smaller text)</p>
                 </div>
+                
+                <!-- Preview Canvas -->
+                <div class="preview-section">
+                    <h3>Live Preview</h3>
+                    <canvas id="previewCanvas" role="img" aria-label="First page layout preview">Preview of first page layout — canvas not supported</canvas>
+                    <p class="preview-hint" id="previewHint">Shows how pages will be arranged on one sheet</p>
+                </div>
+                
                 <div class="layout-grid">
                     <div class="layout-card" data-layout="9">
                         <div class="layout-preview">
                             <div class="grid-preview grid-3x3"></div>
                         </div>
                         <h3>9-in-1</h3>
-                        <p>Max pages per sheet</p>
-                        <span class="badge-small">Best for small notes</span>
+                        <p>Tiny micro cheat sheets</p>
+                        <span class="badge-small">Maximum info per page</span>
                     </div>
                     <div class="layout-card" data-layout="6">
                         <div class="layout-preview">
                             <div class="grid-preview grid-3x2"></div>
                         </div>
                         <h3>6-in-1</h3>
-                        <p>Balanced & readable</p>
-                        <span class="badge-small recommended">Recommended</span>
+                        <p>Perfect for exams</p>
+                        <span class="badge-small recommended">Most Popular</span>
                     </div>
                     <div class="layout-card" data-layout="4">
                         <div class="layout-preview">
                             <div class="grid-preview grid-2x2"></div>
                         </div>
                         <h3>4-in-1</h3>
-                        <p>Large & clear</p>
-                        <span class="badge-small">Easy to read</span>
+                        <p>Large text, easy reading</p>
+                        <span class="badge-small">Great for formulas</span>
                     </div>
                     <div class="layout-card" data-layout="2">
                         <div class="layout-preview">
@@ -138,7 +139,7 @@
                         </div>
                         <h3>2-in-1</h3>
                         <p>Maximum clarity</p>
-                        <span class="badge-small">Slides mode</span>
+                        <span class="badge-small">For lecture slides</span>
                     </div>
                 </div>
                 <div class="card-footer">
@@ -154,7 +155,32 @@
                     <p>Optional customizations</p>
                 </div>
                 
+                <!-- Settings History -->
+                <div class="history-controls">
+                    <button class="btn-icon" id="undoSettings" title="Undo" disabled>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 7v6h6"></path>
+                            <path d="M21 17a9 9 0 00-9-9 9 9 0 00-6 2.3L3 13"></path>
+                        </svg>
+                    </button>
+                    <button class="btn-icon" id="redoSettings" title="Redo" disabled>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 7v6h-6"></path>
+                            <path d="M3 17a9 9 0 019-9 9 9 0 016 2.3l3 2.7"></path>
+                        </svg>
+                    </button>
+                </div>
+                
                 <div class="settings-grid">
+                    <div class="setting-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="autoRotate" checked>
+                            <span class="checkbox-custom"></span>
+                            <span class="checkbox-text">Auto-rotate landscape pages</span>
+                        </label>
+                        <small class="hint">Automatically rotate landscape pages in portrait documents</small>
+                    </div>
+                    
                     <div class="setting-group">
                         <label>Orientation</label>
                         <select id="orientation">
@@ -193,8 +219,18 @@
                     </div>
 
                     <div class="setting-group">
-                        <label>Watermark Text</label>
-                        <input type="text" id="watermark" placeholder="e.g., Exam 2026">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="pageNumbers">
+                            <span class="checkbox-custom"></span>
+                            <span class="checkbox-text">Add Page Numbers</span>
+                        </label>
+                        <small class="hint">Show page numbers in margin</small>
+                    </div>
+                    
+                    <div class="setting-group">
+                        <label>Margin Annotation</label>
+                        <input type="text" id="marginNote" placeholder="e.g., Your Name">
+                        <small class="hint">Optional text in margin</small>
                     </div>
                 </div>
 
@@ -205,7 +241,7 @@
                         <line x1="12" y1="8" x2="12.01" y2="8"></line>
                     </svg>
                     <div>
-                        <strong>Duplex Printing Tip:</strong> When printing, select "Flip on Long Edge" in your printer settings for perfect alignment.
+                        <strong>Front & Back Printing Tip:</strong> When printing, select "Two-Sided" and "Flip on Long Edge" in your printer settings for perfect alignment.
                     </div>
                 </div>
 
@@ -218,8 +254,8 @@
             <!-- Step 4: Generate -->
             <div class="card step-content" id="step4" style="display: none;">
                 <div class="card-header">
-                    <h2>Generating Your Print-Ready PDF</h2>
-                    <p>This may take a few seconds...</p>
+                    <h2>Creating Your Micro Cheat Sheet PDF</h2>
+                    <p>Preparing your front-and-back printable file...</p>
                 </div>
                 
                 <div class="progress-container">
@@ -231,7 +267,7 @@
 
                 <div class="result-card" id="resultCard" style="display: none;">
                     <div class="result-icon">✓</div>
-                    <h3>Your PDF is Ready!</h3>
+                    <h3>Your Micro Cheat Sheet is Ready!</h3>
                     <div class="result-stats">
                         <div class="stat">
                             <span class="stat-label">Original Pages</span>
@@ -252,16 +288,21 @@
                             <polyline points="7 10 12 15 17 10"></polyline>
                             <line x1="12" y1="15" x2="12" y2="3"></line>
                         </svg>
-                        Download Print-Ready PDF
+                        Download Micro Cheat Sheet PDF
                     </button>
+                    
+                    <button class="btn-secondary" id="showPrintGuide" style="margin-top: 10px;">
+                        📖 View Printing Instructions
+                    </button>
+                    
                     <div class="printing-guide">
                         <h4>Printing Instructions:</h4>
                         <ol>
                             <li>Open the downloaded PDF</li>
                             <li>Select "Print" and choose your printer</li>
-                            <li>Enable <strong>"Duplex" or "Two-Sided Printing"</strong></li>
+                            <li>Enable <strong>"Two-Sided" (Front & Back) Printing</strong></li>
                             <li>Select <strong>"Flip on Long Edge"</strong></li>
-                            <li>Print and enjoy perfectly aligned pages!</li>
+                            <li>Print and enjoy perfectly aligned micro cheat sheets!</li>
                         </ol>
                     </div>
                 </div>
@@ -273,8 +314,77 @@
 
     <!-- Footer -->
     <footer>
-        <p>Made for Students, Notes, and Exam Prep | 100% Free & Open Source</p>
+        <p>Perfect for Students, Exam Prep & Study Notes | Print Both Sides, Save Paper 📄 | 100% Free</p>
     </footer>
+
+    <!-- Print Instructions Modal -->
+    <div class="modal" id="printModal" role="dialog" aria-modal="true" aria-labelledby="printModalTitle" aria-describedby="printModalDesc" aria-hidden="true">
+        <div class="modal-content">
+            <button class="modal-close" id="closePrintModal" aria-label="Close print instructions dialog">×</button>
+            <h2 id="printModalTitle">How to Print on Both Sides (Front & Back)</h2>
+            
+            <div class="print-guide-visual" id="printModalDesc">
+                <div class="guide-step">
+                    <div class="step-num">1</div>
+                    <div class="step-content">
+                        <h3>Open Print Dialog</h3>
+                        <p>Open your downloaded PDF and press <kbd>Ctrl+P</kbd> (Windows) or <kbd>Cmd+P</kbd> (Mac)</p>
+                    </div>
+                </div>
+                
+                <div class="guide-step">
+                    <div class="step-num">2</div>
+                    <div class="step-content">
+                        <h3>Enable Two-Sided Printing</h3>
+                        <p>Look for options like:</p>
+                        <ul>
+                            <li>"Two-Sided" or "Front & Back"</li>
+                            <li>"Print on Both Sides"</li>
+                            <li>"Layout: Two-Sided"</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="guide-step">
+                    <div class="step-num">3</div>
+                    <div class="step-content">
+                        <h3>Select "Flip on Long Edge"</h3>
+                        <p><strong>CRITICAL:</strong> Choose "Long Edge" NOT "Short Edge"</p>
+                        <div class="flip-visual">
+                            <div class="flip-option correct">
+                                <div class="flip-demo long-edge"></div>
+                                <p>✓ Long Edge (Correct)</p>
+                            </div>
+                            <div class="flip-option wrong">
+                                <div class="flip-demo short-edge"></div>
+                                <p>✗ Short Edge (Wrong)</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="guide-step">
+                    <div class="step-num">4</div>
+                    <div class="step-content">
+                        <h3>Printer-Specific Tips</h3>
+                        <div class="printer-tips">
+                            <div class="tip">
+                                <strong>Windows:</strong> Look under "Two-Sided Printing" → "Flip pages on long edge"
+                            </div>
+                            <div class="tip">
+                                <strong>Mac:</strong> Look under "Layout" or "Paper Handling" → "Long-Edge binding"
+                            </div>
+                            <div class="tip">
+                                <strong>Manual (No Auto Two-Sided):</strong> Print odd pages first, flip the entire stack, then print even pages
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <button class="btn-primary" id="gotItBtn">Got it! Close</button>
+        </div>
+    </div>
 
     <!-- Scripts -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
