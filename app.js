@@ -24,6 +24,22 @@ let settingsHistory = [JSON.parse(JSON.stringify(config))];
 let historyIndex = 0;
 
 // ======================================
+// UTILITY FUNCTIONS
+// ======================================
+
+// Debounce function to delay execution
+function debounce(func, delay) {
+    let timeoutId;
+    return function(...args) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => func.apply(this, args), delay);
+    };
+}
+
+// Debounced version of updateFileList
+const debouncedUpdateFileList = debounce(updateFileList, 500);
+
+// ======================================
 // INITIALIZATION
 // ======================================
 document.addEventListener('DOMContentLoaded', () => {
@@ -147,6 +163,13 @@ function initEventListeners() {
         
         if (e.key === 'Tab') {
             const focusableElements = printModal.querySelectorAll(focusableElementsString);
+            
+            // Guard against empty focusable elements
+            if (focusableElements.length === 0) {
+                e.preventDefault();
+                return;
+            }
+            
             const firstElement = focusableElements[0];
             const lastElement = focusableElements[focusableElements.length - 1];
             
@@ -268,7 +291,7 @@ async function updateFileList() {
         if (pageRangeInput) {
             pageRangeInput.addEventListener('input', (e) => {
                 fileData.pageRange = e.target.value;
-                updateFileList(); // Refresh to update total pages
+                debouncedUpdateFileList(); // Debounced to avoid expensive updates on every keystroke
             });
         }
         fileList.appendChild(fileItem);
@@ -346,19 +369,35 @@ function redoSettings() {
 }
 
 function updateHistoryButtons() {
-    document.getElementById('undoSettings').disabled = historyIndex === 0;
-    document.getElementById('redoSettings').disabled = historyIndex === settingsHistory.length - 1;
+    const undoBtn = document.getElementById('undoSettings');
+    const redoBtn = document.getElementById('redoSettings');
+    
+    if (undoBtn) {
+        undoBtn.disabled = historyIndex === 0;
+    }
+    if (redoBtn) {
+        redoBtn.disabled = historyIndex === settingsHistory.length - 1;
+    }
 }
 
 function updateSettingsUI() {
-    document.getElementById('orientation').value = config.orientation;
-    document.getElementById('margins').value = config.margins;
-    document.getElementById('spacing').value = config.spacing;
-    document.getElementById('border').value = config.border;
-    document.getElementById('scale').value = config.scale;
-    document.getElementById('autoRotate').checked = config.autoRotate;
-    document.getElementById('pageNumbers').checked = config.pageNumbers;
-    document.getElementById('marginNote').value = config.marginNote;
+    const orientationEl = document.getElementById('orientation');
+    const marginsEl = document.getElementById('margins');
+    const spacingEl = document.getElementById('spacing');
+    const borderEl = document.getElementById('border');
+    const scaleEl = document.getElementById('scale');
+    const autoRotateEl = document.getElementById('autoRotate');
+    const pageNumbersEl = document.getElementById('pageNumbers');
+    const marginNoteEl = document.getElementById('marginNote');
+    
+    if (orientationEl) orientationEl.value = config.orientation;
+    if (marginsEl) marginsEl.value = config.margins;
+    if (spacingEl) spacingEl.value = config.spacing;
+    if (borderEl) borderEl.value = config.border;
+    if (scaleEl) scaleEl.value = config.scale;
+    if (autoRotateEl) autoRotateEl.checked = config.autoRotate;
+    if (pageNumbersEl) pageNumbersEl.checked = config.pageNumbers;
+    if (marginNoteEl) marginNoteEl.value = config.marginNote;
 }
 
 // ======================================
@@ -866,6 +905,12 @@ async function renderSide(page, grid, sourcePdf, selectedPages, cellWidth, cellH
             const pageNum = grid[row][col];
             
             if (pageNum === null) continue; // Skip blank cells
+            
+            // Validate pageNum is within bounds
+            if (pageNum < 1 || pageNum > selectedPages.length) {
+                console.error(`Invalid pageNum ${pageNum}, skipping cell`);
+                continue;
+            }
             
             // Get the actual page index from selected pages
             const actualPageIndex = selectedPages[pageNum - 1] - 1;

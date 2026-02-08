@@ -1243,6 +1243,14 @@ footer {
     color: var(--text-primary);
 }
 
+.modal-close:focus,
+.modal-close:focus-visible {
+    outline: 2px solid var(--text-primary);
+    outline-offset: 2px;
+    border-radius: 4px;
+    color: var(--text-primary);
+}
+
 .modal-content h2 {
     font-size: 28px;
     margin-bottom: 24px;
